@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
+
+    <!-- Bootstrap CSS -->
+    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" rel="stylesheet" />
+    <style>
+        .input-group>.custom-select {
+            flex: 0 1 20vw;
+        }
+    </style>
+    <title>Student</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row mt-4">
+            <div class="col-lg-2"></div>
+            <div class="col-lg-8">
+                <nav class="navbar navbar-expand-lg navbar-light bg-light p-0">
+                    <a class="navbar-brand" href="#">Student</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                      <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                      <ul class="navbar-nav">
+                        <li class="nav-item ">
+                          <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item active">
+                          <a class="nav-link" href="#">Search</a>
+                        </li>
+                      </ul>
+                    </div></nav>
+            </div>
+        <div class="container-fluid">
+            <div class="row mt-4">
+                <div class="col-lg-2"></div>
+                <div class="col-lg-8">
+                    <div class="mb-4">
+                        <h2>Search</h2>
+                    </div>
+                    <form id="form">
+                        <div class="input-group">
+                            <select aria-label="Select Option" class="custom-select flex-grow-0 w-3" id="searchID">
+                                <option value="All" selected>All</option>
+                                <option value="Id">Id</option>
+                                <option value="Name">Name</option>
+                                <option value="Class">Class</option>
+                                <option value="Mark">Mark</option>
+                            </select>
+                            <input aria-label="Query" class="form-control" id="query" type="text flex-grow-1" />
+                            <div class="input-group-append pb-3">
+                                <button class="btn btn-outline-primary" type="submit">
+                                    Search
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-lg-2"></div>
+            </div>
+            <div class="row">
+                <div class="col-lg-2"></div>
+                <div class="col-lg-8">
+                    <ul class="list-group" id="display"></ul>
+                </div>
+                <div class="col-lg-2"></div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script crossorigin="anonymous" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(() => {
+            const display = $("#display");
+            const form = $("#form");
+            const studentUserInput = $("#studentUserInput");
+            const selectedOption = $("#searchID")
+            const query = $("#query")
+
+            const resetStudentsInput = () => {
+                query.val('')
+            };
+
+            const resetDisplay = () => {
+                display.html('')
+            } 
+
+            const getStudents = () => {
+                fetch("/Students", {
+                    method: "get"
+                }).then(response => {
+                    return response.json();
+                }).then(data => { // console.log(data)
+                    displayStudents(data);
+                });
+            };
+
+            // getStudents();
+
+
+            const buildTemplate = (Student) => {
+                return `<li class="list-group-item">
+                    <div class="row">
+                        <div class="col-3">${Student.name}</div>
+                        <div class="col-3">${Student.class}</div>
+                        <div class="col-3">${Student.mark}</div>
+                        <div class="col-3">${Student.sex}</div>
+                    </div>  
+                </li>`;
+            };
+
+            const displayStudents = data => {
+                data.forEach(Student => {
+                    // let ids = buildIDS(todo);
+                    display.append(buildTemplate(Student));
+                    // deleteTodo(todo, ids.listItemID, ids.deleteID);
+                });
+            };
+
+            form.submit(e => {
+                e.preventDefault();
+                resetDisplay();
+                switch (selectedOption.val()) {
+                    case "All":
+                        fetch("Students/", {
+                            method: "get"
+                        }).then(response => {
+                            return response.json();
+                        }).then(data => {
+                            console.log(data)
+                            displayStudents(data)
+                            resetStudentsInput()
+                        });
+                        break;
+                    
+                    case "Id":
+                        fetch("Students/"+query.val(), {
+                            method: "get"
+                        }).then(response => {
+                            return response.json();
+                        }).then(data => {
+                            console.log(data)
+                            displayStudents(data)
+                            resetStudentsInput()
+                        });
+                        break;
+
+                    case "Name":
+                    fetch("Students/?name="+query.val(), {
+                            method: "get"
+                        }).then(response => {
+                            return response.json();
+                        }).then(data => {
+                            console.log(data)
+                            displayStudents(data)
+                            resetStudentsInput()
+                        });
+                        break;
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
