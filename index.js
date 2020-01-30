@@ -1,18 +1,18 @@
 const express = require('express'),
   app = express(),
-  bodyParser = require('body-parser');
-  port = process.env.PORT || 3000;
+  bodyParser = require('body-parser'),
+  port = process.env.PORT;
 
 
 const mysql = require('mysql');
 // connection configurations
 const mc = mysql.createConnection({
-    host: 'localhost',
-    user: 'mfayaq',
-    password: 'thunder321',
-    database: 'students'
+  host: 'remotemysql.com',
+  user: 'NMpbx2VFr1',
+  password: 'WRTswZmB8Q',
+  database: 'NMpbx2VFr1'
 });
- 
+
 // connect to database
 mc.connect();
 
